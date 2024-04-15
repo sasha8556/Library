@@ -1,0 +1,22 @@
+{
+  "name": "library",
+  "version": "1.0.0",
+  "description": "Develop a web application in Node.js using the Express framework and ORM Sequelize for database management. The application will be a simple book accounting system in the library.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js"
+  },
+  "author": "Aliaksandra",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.11.4",
+    "sequelize": "^6.37.2",
+    "sequelize-cli": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
