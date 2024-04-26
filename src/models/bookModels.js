@@ -23,6 +23,10 @@ const Book = sequelize.define("Books", {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  userId: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Book;

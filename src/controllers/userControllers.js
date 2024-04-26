@@ -1,4 +1,5 @@
 const UsersService = require("../services/userServices");
+const { validationResult } = require("express-validator");
 require("dotenv").config();
 
 class UsersController {
@@ -13,6 +14,10 @@ class UsersController {
 
   async createUser(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
       const { name, email } = req.body;
       const allUsers = await UsersService.getUser();
       const existingUser = allUsers.some((user) => user.email === email);
@@ -34,6 +39,10 @@ class UsersController {
 
   async getUserByEmail(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
       const { email } = req.params;
       const user = await UsersService.getUserByEmail(email);
       res.send(user);
@@ -44,6 +53,10 @@ class UsersController {
 
   async updateUserByEmail(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
       const { email } = req.params;
       const { name } = req.body;
       const user = await UsersService.updateUserByEmail(name, email);
@@ -56,6 +69,10 @@ class UsersController {
 
   async deleteUserByEmail(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
       const { email } = req.params;
       await UsersService.deleteUserByEmail(email);
       res.status(200).json("DONE");

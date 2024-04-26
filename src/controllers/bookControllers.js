@@ -1,4 +1,5 @@
 const BooksService = require("../services/bookServices");
+const { validationResult } = require("express-validator");
 require("dotenv").config();
 
 class BooksController {
@@ -7,8 +8,6 @@ class BooksController {
       const page = parseInt(req.query.page) || 1;
       const limit = parseInt(req.query.limit) || 10;
       const offset = (page - 1) * limit;
-
-      console.log(page,limit,offset);
 
       const books = await BooksService.getBooks({ offset, limit });
       res.send(books);
@@ -19,8 +18,18 @@ class BooksController {
 
   async createBook(req, res) {
     try {
-      const { title, author, year, pageCount } = req.body;
-      const allBooks = await BooksService.getBooks();
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const { title, author, year, pageCount, userId } = req.body;
+
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
+      const allBooks = await BooksService.getBooks({ offset, limit });
       const existingBook = allBooks.some((books) => books.title === title);
 
       if (existingBook) {
@@ -29,7 +38,7 @@ class BooksController {
           .json({ error: "Книга с таким title уже существует" });
       }
 
-      const newBook = { title, author, year, pageCount };
+      const newBook = { title, author, year, pageCount, userId };
 
       let result = await BooksService.createBook(newBook);
       res.status(201).json(result);
@@ -40,6 +49,11 @@ class BooksController {
 
   async getBookByTitle(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const { title } = req.params;
       const book = await BooksService.getBookByTitle(title);
       res.send(book);
@@ -50,6 +64,11 @@ class BooksController {
 
   async getBookByData(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const { title, author } = req.query;
       const book = await BooksService.getBookByData(title, author);
       res.json(book);
@@ -68,13 +87,19 @@ class BooksController {
 
   async updateBook(req, res) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
       const { id } = req.params;
-      const { title, author, year, pageCount } = req.body;
+      const { title, author, year, pageCount, userId } = req.body;
       const updatedBook = await BooksService.updateBook(id, {
         title,
         author,
         year,
         pageCount,
+        userId,
       });
       res.json(updatedBook);
     } catch (error) {
